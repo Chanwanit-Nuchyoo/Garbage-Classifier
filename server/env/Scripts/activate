@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\thai_\OneDrive\Coding\Garbages-Classifier\server\env"
+VIRTUAL_ENV="D:\gitrepo\Garbage-Classifier\server\env"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
