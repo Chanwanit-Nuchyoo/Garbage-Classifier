@@ -1,36 +1,67 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import FileUploadArea from "./components/FileUploadArea";
+import FilePreview from "./components/FilePreview";
+import Results from "./components/Results";
 
 function App() {
-  const [image, setImage] = useState(null);
-  const [output, setOutput] = useState(null);
+  const [images, setImages] = useState([]);
+  const [results, setResults] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleImageSubmit = async (e) => {
-    e.preventDefault();
+  function onImagesDrop(image) {
+    const newImages = [...images];
+    image.forEach((i) => newImages.push(i));
+    setImages(newImages);
+  }
+
+  function onImageDelete(index) {
+    const newImages = images.filter((img, i) => i !== index);
+    setImages(newImages);
+  }
+
+  const handleImageSubmit = async () => {
+    if (images.length <= 0) {
+      setIsLoading(false);
+      return;
+    }
+
     const formData = new FormData();
-    formData.append("image", e.target.img.files[0]);
+    for (let i = 0; i < images.length; i++) {
+      formData.append("images", images[i]);
+    }
+
+    setImages([]);
 
     const response = await fetch("http://localhost:8000/predict", {
       method: "POST",
       body: formData,
-    });
+    })
+      .then((r) => r.json())
+      .catch((err) => setError(err.message));
 
-    const result = await response.json();
+    // const newResult = response.image.map((r) => {
+    //   const imageUrl = URL.createObjectURL(new Blob([r.image]));
+    //   return { image: imageUrl, name: r.name, output: r.output };
+    // });
 
-    setImage(`data:image/png;base64,${result.image}`);
-    setOutput(result.output)
+    setResults(response);
+    setIsLoading(false);
   };
 
   return (
-    <div className="my-4 w-full flex flex-col items-center justify-center">
-      <form method="post" onSubmit={handleImageSubmit}>
-        <label className="p-4" htmlFor="img">Select image:</label>
-        <input className="p-4" type="file" id="img" name="img" accept="image/*" />
-        <button className="p-1 bg-slate-600 rounded-lg text-white" type="submit">Predict</button>
-      </form>
-
-      <div className="w-[300px] h-[300px]">
-        {image && <img className="rounded-lg mt-4" src={image} alt="Uploaded" />}
-        {output && <p className="text-4xl font-bold text-center mt-4">Output : {output}</p>}
+    <div>
+      <div className="container mx-auto p-4 w-full min-h-[100vh] max-w-[1000px]">
+        <div className="flex gap-4 justify-start items-start mx-auto mb-10">
+          <FileUploadArea setImages={onImagesDrop} />
+          <FilePreview
+            images={images}
+            onDelete={onImageDelete}
+            onSubmit={handleImageSubmit}
+            setLoad={setIsLoading}
+          />
+        </div>
+        {results.length !== 0 && <Results results={results} />}
       </div>
     </div>
   );

@@ -5,6 +5,8 @@ from io import BytesIO
 from keras import models # load model
 from PIL import Image # open and resize image
 import numpy as np 
+from typing import List
+import json
 
 model = models.load_model('./best_model.h5')
 
@@ -21,7 +23,7 @@ app.add_middleware(
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*","Access-Control-Allow-Origin"],
 )
 
 @app.get("/")
@@ -56,24 +58,36 @@ def preprocess_image(image_object):
     return img_array
 
 @app.post("/predict")
-async def predict(image: UploadFile):
+async def predict(images: List[UploadFile]):
 
-    if not image.content_type.startswith("image/"):
-        raise HTTPException(status_code=400, detail="Uploaded file is not an image")
+    response = []
 
-    img_bytes = BytesIO(await image.read())
+    # for image in images:
+    #     print(image.filename)
 
-    img = Image.open(img_bytes)
-    # image_bytes = await image.read()
+    for image in images:
 
-    img_array = preprocess_image(img)
+        if not image.content_type.startswith("image/"):
+            raise HTTPException(status_code=400, detail="Uploaded file is not an image")
 
-    output = CATEGORIES[np.argmax(model.predict(x=img_array, batch_size=1, verbose=0))]
+        img_bytes = BytesIO(await image.read())
 
-    encoded_image = base64.b64encode(img_bytes.getvalue()).decode("utf-8")
+        img = Image.open(img_bytes)
 
-    return {
-        "filename": image.filename,
-        "image": encoded_image,
-        "output": output,
-    }
+        img_array = preprocess_image(img)
+
+        output = CATEGORIES[np.argmax(model.predict(x=img_array, batch_size=1, verbose=0))]
+        
+        buffered = BytesIO()
+        img.save(buffered, format="JPEG")
+        img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+        response.append(
+            {
+                "imgName": image.filename,
+                "imgData": img_str,
+                "output": output,
+            }
+        )
+
+    return response
