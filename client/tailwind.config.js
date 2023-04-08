@@ -2,10 +2,13 @@
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        BGdarkblue: {
+          500: "rgba(25, 0, 55, 1)",
+        },
+      },
+    },
   },
-  plugins: [],
-  corePlugins: {
-    preflight: false,
-  },
+  plugins: [require("tailwind-scrollbar")],
 };
