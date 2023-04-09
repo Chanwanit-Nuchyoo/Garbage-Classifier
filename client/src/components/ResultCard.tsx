@@ -13,7 +13,7 @@ const ResultCard = (props: Props) => {
     <div className="text-black select-none flex-shrink-0 flex flex-col w-[250px] h-full bg-white rounded-lg overflow-hidden">
       <div className="w-full h-[246px]">
         <img
-          src={img}
+          src={`data:image/jpeg;base64,${img}`}
           draggable="false"
           className="select-none w-full h-full object-cover"
         />

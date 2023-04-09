@@ -6,7 +6,7 @@ import FilePreview from "../components/FilePreview";
 interface Props {}
 
 const Model = ({}) => {
-  const [imageFiles, setImageFiles] = useState([]);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   return (
     <div className="max-w-[1140px] h-full mx-auto flex flex-col justify-start items-center py-[100px]">
       <Heading />
@@ -15,8 +15,8 @@ const Model = ({}) => {
         Battery, Trash, Cardboard, Shoes, Clothes and Plastic.
       </p>
       <div className="flex justify-center items-center w-full mt-14 gap-4">
-        <FileUploadArea />
-        <FilePreview />
+        <FileUploadArea setImageFiles={setImageFiles} />
+        <FilePreview imageFiles={imageFiles} setImageFiles={setImageFiles} />
       </div>
     </div>
   );

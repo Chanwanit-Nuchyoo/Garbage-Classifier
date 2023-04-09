@@ -1,10 +1,17 @@
-import React from "react";
+import React, { createContext } from "react";
 import ReactDOM from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Link, redirect, RouterProvider } from "react-router-dom";
 import "./index.css";
 import LandingPage from "./pages/LandingPage";
 import Model from "./pages/Model";
 import Result from "./pages/Result";
+
+const ErrorPage = ()=>{
+  return <div className="w-full h-full flex justify-center items-center">
+    <p className="text-4xl">Something is wrong</p>
+  </div>
+}
+
 
 const myRouter = createBrowserRouter([
   {
@@ -18,6 +25,12 @@ const myRouter = createBrowserRouter([
   {
     path: "result",
     element: <Result />,
+    errorElement: <>
+      <div className="flex flex-col w-full h-screen justify-center items-center gap-4">
+        <p className="text-3xl font-bold">Some thing is wrong!</p>
+        <Link to={'/'} className="text-xl py-2 px-8 bg-blue-500 hover:bg-blue-700 rounded-lg">Go back to home page</Link>
+      </div>
+    </>
   },
 ]);
 

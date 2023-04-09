@@ -2,11 +2,24 @@ import Dropzone from "react-dropzone";
 import imglogo from "../assets/imglogo.png";
 import React from "react";
 
-type Props = {};
+type Props = {
+  setImageFiles: React.Dispatch<React.SetStateAction<File[]>>;
+};
 
 const FileUploadArea = (props: Props) => {
+  const { setImageFiles } = props;
+
+  const handleSubmitFiles = (files: File[]) => {
+    if (files.length)
+      setImageFiles((prevState) => {
+        const newState = [...prevState];
+        newState.push(...files);
+        return newState;
+      });
+  };
+
   return (
-    <Dropzone onDrop={(acceptedFiles) => console.log(acceptedFiles)}>
+    <Dropzone onDrop={(acceptedFiles) => handleSubmitFiles(acceptedFiles)}>
       {({ getRootProps, getInputProps }) => (
         <section>
           <div
