@@ -1,0 +1,12 @@
+services:
+  frontend:
+    build: 
+      context: ./client  # Path to the frontend Dockerfile
+    ports: 
+      - "5173:5173"      # Map host port 5173 to container port 5173
+
+  backend:
+    build: 
+      context: ./server  # Path to the backend Dockerfile
+    ports: 
+      - "8000:8000"      # Map host port 8000 to container port 8000

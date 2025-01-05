@@ -12,10 +12,6 @@
 /client/dist-ssr
 /client/*.local
 
-/server/env
-/server/__pycache__
-
-/server/best_model.h5
 
 # Editor directories and files
 .vscode/*
